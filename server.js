@@ -1,21 +1,18 @@
 // server.js
 const express = require("express");
-const dotenv = require("dotenv");
-const healthRoute = require("./routes/health");
-
-dotenv.config();
-
 const app = express();
-const PORT = process.env.PORT || 5000;
+const healthRouter = require("./routes/health");
 
-app.use("/api", healthRoute);
+app.use(express.json());
+app.use("/api/health", healthRouter);
 
-app.get("/", (req, res) => {
-  res.send("Welcome to the API!");
-});
+// Export app for testing
+module.exports = app;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-// Health check route added in Session 49
+// Only start server if not being tested
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
